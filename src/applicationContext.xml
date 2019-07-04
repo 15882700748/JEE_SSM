@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--xml配置-->
+    <bean id="user1" class="com.zst.experiment_1.user.ComplexUser">
+        <constructor-arg index="0" value="chenheng1"/>
+        <constructor-arg index="1">
+            <list>
+                <value>唱歌</value>
+                <value>跳舞</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <map>
+                <entry key="dalian" value="大连"> </entry>
+                <entry key="shanghai" value="上海"> </entry>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="3">
+            <set>
+                <value>陈恒100</value>
+                <value>陈恒200</value>
+            </set>
+        </constructor-arg>
+        <constructor-arg index="4">
+            <array>
+                <value>aaaa</value>
+                <value>bbbb</value>
+            </array>
+        </constructor-arg>
+    </bean>
+    <bean id="user2" class="com.zst.experiment_1.user.ComplexUser">
+        <property name="uname" value="chenheng2"/>
+        <property name="hobbyList">
+            <list>
+                <value>学习</value>
+                <value>看书</value>
+            </list>
+        </property>
+        <property name="residenceMap">
+            <map>
+                <entry key="shenzhen" value="深圳"> </entry>
+                <entry key="guangzhou" value="广州"> </entry>
+            </map>
+        </property>
+        <property name="aliasSet">
+            <set>
+                <value>陈恒103</value>
+                <value>陈恒104</value>
+            </set>
+        </property>
+        <property name="array">
+            <array>
+                <value>ccccc</value>
+                <value>ddddd</value>
+            </array>
+        </property>
+    </bean>
+    <!--注解开启-->
+    <context:component-scan base-package="com.zst.experiment_1.*"/>
+    <context:component-scan base-package="com.zst.experiment_2.*"/>
+    <!--aop配置-->
+    <bean id="testDao" class="com.zst.experiment_1.dao.TestDaoImpl"/>
+    <bean id="myAspect" class="com.zst.experiment_1.aop.MyAspect"/>
+    <aop:config>
+        <aop:aspect ref="myAspect">
+            <aop:pointcut expression="execution(* com.zst.experiment_1.dao.*.*(..))" id="myPointCut"/>
+            <aop:before method="before" pointcut-ref="myPointCut"/>
+            <aop:after-returning method="afterReturning" pointcut-ref="myPointCut"/>
+            <aop:around method="around" pointcut-ref="myPointCut"/>
+            <aop:after-throwing method="except" pointcut-ref="myPointCut" throwing="e"/>
+            <aop:after method="after" pointcut-ref="myPointCut"/>
+        </aop:aspect>
+    </aop:config>
+
+    <!--mybatis的配置-->
+    <!--ds配置-->
+    <bean id="ds"  class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/smbms?useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+        <property name="maxTotal" value="30"/>
+        <property name="maxIdle" value="10"/>
+        <property name="initialSize" value="5"/>
+    </bean>
+    <!--sqlSession配置-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="dataSource" ref="ds"/>
+        <property name="mapperLocations" value="classpath:com/zst/experiment_2/mapper/*.xml"/>
+    </bean>
+    <!--mybatis注解配置-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.zst.experiment_2.dao"/>
+        <property name="annotationClass" value="com.zst.experiment_2.annotation.MyBatis"/>
+    </bean>
+</beans>

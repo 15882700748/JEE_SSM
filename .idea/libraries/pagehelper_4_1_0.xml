@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pagehelper-4.1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/JEE_ssm_war_exploded/WEB-INF/lib/pagehelper-4.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
